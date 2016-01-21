@@ -1,21 +1,28 @@
 <?php
-// use Slince\Console\Stdio;
-// use Slince\Console\Input;
-// use Slince\Console\Output;
-// include __DIR__ . '/../vendor/autoload.php';
+use Slince\Console\Stdio;
+use Slince\Console\Command;
+use Slince\Console\Console;
+use Slince\Console\Argv;
 
-// $stdio = new Stdio(new Input(), new Output(), new Output('php://stderr'));
+include __DIR__ . '/../vendor/autoload.php';
 
-// $i = 0;
-// while (true) {
-//     $in  = $stdio->in();
-//     if ($in == 0) {
-//         break;
-//     }
-//     $stdio->outln($in);
-// }
+class SayHalloCommand extends Command
+{
+    protected $name = 'hello';
+    
+    function init()
+    {
+        
+    }
+    
+    function execute(Stdio $io, Argv $argv)
+    {
+        $io->out("Say your name: ");
+        $name = $io->in();
+        $io->outln("Hello {$name}");
+    }
+}
 
-$options = getopt("a:");
-var_dump($options);
-// print_r($_SERVER['argv']);
-?>
+$console = new Console();
+$console->addCommand(new SayHalloCommand());
+$console->run();

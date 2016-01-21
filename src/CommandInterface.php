@@ -6,5 +6,5 @@ interface CommandInterface
 
     function getName();
 
-    function execute(Stdio $stdio);
+    function execute(Stdio $io, Argv $argv);
 }
