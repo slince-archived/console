@@ -8,8 +8,32 @@ class Console
 
     protected $commends = [];
 
-    function addCommand(CommendInterface $commend)
+    /**
+     * argv
+     *
+     * @var Argv
+     */
+    protected $argv;
+
+    function addCommand(CommandInterface $command)
     {
-        $this->commends[$commend->getName()] = $commend;
+        $this->commends[$command->getName()] = $command;
+    }
+
+    function run(Argv $argv = null)
+    {
+        if (is_null($argv)) {
+            $argv = new Argv($_SERVER['argv']);
+        }
+        $this->argv = $agrv;
+        $commandName = $this->argv->shift();
+        if (isset($this->commends[$commandName])) {
+            $this->runCommand($this->commends[$commandName]);
+        }
+    }
+
+    function runCommand(CommandInterface $command)
+    {
+        return $command->execute();
     }
 }
