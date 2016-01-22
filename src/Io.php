@@ -1,7 +1,7 @@
 <?php
 namespace Slince\Console;
 
-class Stdio
+class Io
 {
 
     protected $in;
