@@ -21,15 +21,30 @@ class Console
      * @var Argv
      */
     protected $argv;
+    
+    /**
+     * helper registery
+     *
+     * @var HelperRegistery
+     */
+    protected $helperRegistry;
 
-    function __construct(Stdio $io = null)
+    function __construct(Stdio $io = null, $helperRegistry = null)
     {
         if (is_null($io)) {
             $io = new Stdio(new Input(), new Output(), new Output('php://stderr'));
         }
+        if (is_null($helperRegistry)) {
+            $this->helperRegistry = $helperRegistry;
+        }
         $this->io = $io;
     }
 
+    function getHelperRegistry()
+    {
+        return $this->helperRegistry;
+    }
+    
     function addCommand(CommandInterface $command)
     {
         $this->commends[$command->getName()] = $command;
@@ -41,14 +56,16 @@ class Console
             $argv = new Argv($_SERVER['argv']);
         }
         $this->argv = $argv;
-        $commandName = $this->argv->shift();
-        if (isset($this->commends[$commandName])) {
-            $this->runCommand($this->commends[$commandName]);
+        $name = $this->argv->getFirstArgument();
+        if (isset($this->commends[$name])) {
+            $this->runCommand($this->commends[$name]);
         }
     }
 
     function runCommand(CommandInterface $command)
     {
+        $options = CommandCompiler::compileOptions($command);
+        
         return $command->execute($this->io, $this->argv);
     }
 }

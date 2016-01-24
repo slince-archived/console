@@ -1,7 +1,7 @@
 <?php
-namespace Slince\Console;
+namespace Slince\Console\Context;
 
-class Option
+class Argument
 {
 
     const VALUE_NONE = 1;
@@ -18,11 +18,6 @@ class Option
 
     protected $default;
 
-    /**
-     * help
-     *
-     * @var Help
-     */
     function __construct($name, $valueMode, $description = null, $default = null)
     {
         $this->name = $name;
@@ -54,15 +49,5 @@ class Option
     function getDefault()
     {
         return $this->default;
-    }
-
-    function setHelp(Help $help)
-    {
-        $this->help = $help;
-    }
-
-    function getHelp()
-    {
-        return $this->help;
     }
 }

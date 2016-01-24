@@ -1,7 +1,7 @@
 <?php
-namespace Slince\Console;
+namespace Slince\Console\Context;
 
-class Argument
+class Option
 {
 
     const VALUE_NONE = 1;
@@ -18,6 +18,11 @@ class Argument
 
     protected $default;
 
+    /**
+     * help
+     *
+     * @var Help
+     */
     function __construct($name, $valueMode, $description = null, $default = null)
     {
         $this->name = $name;
@@ -40,14 +45,39 @@ class Argument
     {
         return $this->valueMode === self::VALUE_OPTIONAL;
     }
+    
+    function isValueNone()
+    {
+        return $this->valueMode === self::VALUE_NONE;
+    }
 
     function getDescription()
     {
         return $this->description;
     }
+    
+    /**
+     * 单字母被认为是短option
+     * 
+     * @return boolean
+     */
+    function isShort()
+    {
+        return strlen($name) == 1;
+    }
 
     function getDefault()
     {
         return $this->default;
+    }
+
+    function setHelp(Help $help)
+    {
+        $this->help = $help;
+    }
+
+    function getHelp()
+    {
+        return $this->help;
     }
 }

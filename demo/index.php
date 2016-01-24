@@ -27,6 +27,7 @@ use Slince\Console\Argv;
 // $console->addCommand(new SayHalloCommand());
 // $console->run();
 
+$options = 'a:b';
+var_dump(getopt($options));
 
-$model = 2 | 9;
-var_dump($model & 9);
+// var_dump($argv);

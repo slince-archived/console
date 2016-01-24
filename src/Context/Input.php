@@ -1,5 +1,5 @@
 <?php
-namespace Slince\Console;
+namespace Slince\Console\Context;
 
 class Input
 {
