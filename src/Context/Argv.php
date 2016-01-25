@@ -1,6 +1,8 @@
 <?php
 namespace Slince\Console\Context;
 
+use Slince\Console\Exception\RuntimeException;
+
 class Argv
 {
 
@@ -12,12 +14,21 @@ class Argv
 
     protected $scriptName;
 
-    function __construct($argv)
+    /**
+     * Definition
+     *
+     * @var Definition
+     */
+    protected $definition;
+
+    function __construct($argv, Definition $definition = null)
     {
         // 排出脚本名称
         $this->scriptName = array_shift($argv);
         $this->tokens = $argv;
-        $this->parse();
+        if (! is_null($definition)) {
+            $this->bind($definition);
+        }
     }
 
     function getScriptName()
@@ -25,34 +36,84 @@ class Argv
         return $this->scriptName;
     }
 
+    function bind(Definition $definition)
+    {
+        $this->definition = $definition;
+        $this->parse();
+    }
+
     protected function parse()
     {
-        foreach ($this->tokens as $token) {
+        while (($token = array_shift($this->tokens)) != null) {
             if (substr($token, 0, 2) == '--') {
                 $this->parseLongOption($token);
-            } elseif(substr($token, 0, 1) == '-') {
+            } elseif (substr($token, 0, 1) == '-') {
                 $this->parseShortOption($token);
             } else {
                 $this->parseArgument($token);
             }
         }
     }
-    
-    protected function parseLongOption()
+
+    protected function parseLongOption($token)
     {
-        
+        $name = substr($token, 2);
+        $value = null;
+        if (strpos($name, '=') !== false) {
+            list ($name, $value) = explode('=', $name);
+        }
+        $this->addOption($name, $value);
     }
-    
-    protected function parseShortOption()
+
+    protected function parseShortOption($token)
     {
-        
+        $name = $token = substr($token, 1);
+        $value = null;
+        // -abc情况判断
+        if (strlen($token) > 1) {
+            $name = $token{0};
+            $option = $this->definition->getOption($name);
+            // 如果必须有值，则第一个是option name，其它是option value
+            if ($option->isValueRequired()) {
+                $value = substr($token, 1);
+            } else { // 否则作为 -a -b -c的简写形式
+                for ($i = 1; $i <= strlen($token); $i ++) {
+                    array_unshift($this->tokens, "-{$token{$i}}");
+                }
+            }
+        }
+        $this->addOption($name, $value);
     }
-    
-    protected function parseArgument()
+
+    protected function parseArgument($token)
     {
-        
+        $index = count($this->arguments);
+        $argument = $this->definition->getArgumentByIndex($index);
+        $this->arguments[$argument->getName()] = $token;
     }
-    
+
+    function addOption($name, $value)
+    {
+        $option = $this->definition->getOption($name);
+        if (is_null($value)) {
+            if ($option->isValueRequired()) {
+                $value = $this->getNextToken();
+                if (! empty($value)) {
+                    array_shift($this->tokens);
+                } else {
+                    throw new RuntimeException(sprintf('The "%s" option requires a value.', $option->isShort() ? "-{$name}" : "--{$name}"));
+                }
+            } elseif ($option->isValueOptional()) {
+                $value = $option->getDefault();
+            }
+        } else {
+            if ($option->isValueNone()) {
+                throw new RuntimeException(sprintf('The "%s" option does not accept a value.', $option->isShort() ? "-{$name}" : "--{$name}"));
+            }
+        }
+        $this->options[$name] = $value;
+    }
+
     function getFirstArgument()
     {
         foreach ($this->argv as $argument) {
@@ -81,5 +142,10 @@ class Argv
     function getOptions()
     {
         return $this->options;
+    }
+
+    protected function getNextToken()
+    {
+        return next($this->tokens);
     }
 }

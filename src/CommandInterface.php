@@ -6,9 +6,9 @@ interface CommandInterface
 
     function getName();
     
-    function getOptions();
+    function getDefinition();
     
-    function getArguments();
+    function setConsole(Console $console);
 
     function execute(Stdio $io, Argv $argv);
 }

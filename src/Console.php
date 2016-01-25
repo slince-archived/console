@@ -2,6 +2,7 @@
 namespace Slince\Console;
 
 use Slince\Console\Commend\CommendInterface;
+use Slince\Console\Context\Argv;
 
 class Console
 {
@@ -29,14 +30,15 @@ class Console
      */
     protected $helperRegistry;
 
-    function __construct(Stdio $io = null, $helperRegistry = null)
+    function __construct(Io $io = null, HelperRegistery $helperRegistry = null)
     {
         if (is_null($io)) {
             $io = new Stdio(new Input(), new Output(), new Output('php://stderr'));
         }
         if (is_null($helperRegistry)) {
-            $this->helperRegistry = $helperRegistry;
+            $helperRegistry = new HelperRegistery();
         }
+        $this->helperRegistry = $helperRegistry;
         $this->io = $io;
     }
 
@@ -47,6 +49,7 @@ class Console
     
     function addCommand(CommandInterface $command)
     {
+        $command->setConsole($this);
         $this->commends[$command->getName()] = $command;
     }
 
@@ -64,8 +67,7 @@ class Console
 
     function runCommand(CommandInterface $command)
     {
-        $options = CommandCompiler::compileOptions($command);
-        
+        $this->argv->bind($command->getDefinition());
         return $command->execute($this->io, $this->argv);
     }
 }

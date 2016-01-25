@@ -15,10 +15,6 @@ class Command implements CommandInterface
 
     protected $name;
 
-    protected $options = [];
-
-    protected $arguments = [];
-
     /**
      * help
      *
@@ -26,7 +22,19 @@ class Command implements CommandInterface
      */
     protected $help;
 
+    /**
+     * Definition
+     *
+     * @var Definition
+     */
+    protected $definition;
+
     function init();
+    
+    function setConsole(Console $console)
+    {
+        $this->console = $console;
+    }
 
     function getName()
     {
@@ -40,13 +48,13 @@ class Command implements CommandInterface
 
     function addOption($name, $valueModel, $description = null, $default = null)
     {
-        $this->options[] = new Option($name, $valueMode, $description, $default);
+        $this->definition->addOption(new Option($name, $valueMode, $description, $default));
         return $this;
     }
 
     function addArgument($name, $valueModel, $description = null, $default = null)
     {
-        $this->arguments[] = new Argument($name, $valueMode, $description, $default);
+        $this->definition->addArgument(new Argument($name, $valueMode, $description, $default));
         return $this;
     }
 
@@ -64,7 +72,12 @@ class Command implements CommandInterface
     {
         return $this->console->getHelperRegistry()->get($name);
     }
-    
+
+    function getDefinition()
+    {
+        return $this->definition;
+    }
+
     function registerHelper($name, HelperInterface $helper)
     {
         $this->console->getHelperRegistry()->register($name, $helper);

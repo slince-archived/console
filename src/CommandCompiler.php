@@ -19,13 +19,13 @@ class CommandCompiler
         }
         return getopt(implode('', $shortOptions), $longOptions);
     }
-    
+
     protected static function parseOption(Option $option)
     {
         $optionStr = $option->getName();
         if ($option->isValueRequired()) {
             $optionStr .= ':';
-        } elseif($option->isValueOptional()) {
+        } elseif ($option->isValueOptional()) {
             $optionStr .= '::';
         }
         return $optionStr;

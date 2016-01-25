@@ -27,7 +27,7 @@ use Slince\Console\Argv;
 // $console->addCommand(new SayHalloCommand());
 // $console->run();
 
-$options = 'a:b';
+$options = 'ab';
 var_dump(getopt($options));
 
 // var_dump($argv);
