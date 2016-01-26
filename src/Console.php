@@ -2,7 +2,10 @@
 namespace Slince\Console;
 
 use Slince\Console\Commend\CommendInterface;
+use Slince\Console\Context\Io;
 use Slince\Console\Context\Argv;
+use Slince\Console\Context\Input;
+use Slince\Console\Context\Output;
 
 class Console
 {
@@ -12,7 +15,7 @@ class Console
     /**
      * stdio
      *
-     * @var Stdio
+     * @var Io
      */
     protected $io;
 
@@ -30,13 +33,13 @@ class Console
      */
     protected $helperRegistry;
 
-    function __construct(Io $io = null, HelperRegistery $helperRegistry = null)
+    function __construct(Io $io = null, HelperRegistry $helperRegistry = null)
     {
         if (is_null($io)) {
-            $io = new Stdio(new Input(), new Output(), new Output('php://stderr'));
+            $io = new Io(new Input(), new Output(), new Output('php://stderr'));
         }
         if (is_null($helperRegistry)) {
-            $helperRegistry = new HelperRegistery();
+            $helperRegistry = new HelperRegistry();
         }
         $this->helperRegistry = $helperRegistry;
         $this->io = $io;
@@ -59,7 +62,7 @@ class Console
             $argv = new Argv($_SERVER['argv']);
         }
         $this->argv = $argv;
-        $name = $this->argv->getFirstArgument();
+        $name = $this->getCommandName();
         if (isset($this->commends[$name])) {
             $this->runCommand($this->commends[$name]);
         }
@@ -69,5 +72,10 @@ class Console
     {
         $this->argv->bind($command->getDefinition());
         return $command->execute($this->io, $this->argv);
+    }
+    
+    function getCommandName()
+    {
+        return $this->argv->getFirstArgument();
     }
 }

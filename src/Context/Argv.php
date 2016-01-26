@@ -116,11 +116,10 @@ class Argv
 
     function getFirstArgument()
     {
-        foreach ($this->argv as $argument) {
-            if ($argument && '-' === $argument[0]) {
-                continue;
+        foreach ($this->tokens as $token) {
+            if ($token && $token{0} != '-') {
+                return $token;
             }
-            return $argument;
         }
     }
 

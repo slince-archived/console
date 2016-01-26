@@ -1,6 +1,8 @@
 <?php
 namespace Slince\Console\Context;
 
+use Slince\Console\Exception\InvalidArgumentException;
+
 class Definition
 {
 
@@ -29,7 +31,7 @@ class Definition
         $index= intval($index);
         $arguments = array_values($this->arguments);
         if (! isset($arguments[$index])) {
-            
+            throw new InvalidArgumentException(sprintf('The "%s" argument does not exist.', $index));
         }
         return $arguments[$index];
     }
@@ -42,6 +44,9 @@ class Definition
      */
     function getOption($name)
     {
-        return isset($this->options[$name]) ? $this->options[$name] : null; 
+        if (! isset($this->options[$name])) {
+            throw new InvalidArgumentException(sprintf('The "%s" option does not exist.', $name));
+        }
+        return $this->options[$name]; 
     }
 }

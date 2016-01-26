@@ -3,6 +3,10 @@ namespace Slince\Console;
 
 use Slince\Console\Helper\HelperInterface;
 
+use Slince\Console\Context\Io;
+use Slince\Console\Context\Argv;
+use Slince\Console\Context\Definition;
+
 class Command implements CommandInterface
 {
 
@@ -28,9 +32,12 @@ class Command implements CommandInterface
      * @var Definition
      */
     protected $definition;
-
-    function init();
     
+    function __construct()
+    {
+        $this->definition = new Definition();
+    }
+
     function setConsole(Console $console)
     {
         $this->console = $console;
@@ -41,9 +48,12 @@ class Command implements CommandInterface
         return $this->name;
     }
 
-    function execute(Stdio $io, Argv $argv)
+    function initialize(Io $io, Argv $argv)
     {
-        trigger_error();
+    }
+    function execute(Io $io, Argv $argv)
+    {
+        $this->initialize($io, $argv);
     }
 
     function addOption($name, $valueModel, $description = null, $default = null)

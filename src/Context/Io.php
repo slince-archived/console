@@ -1,8 +1,5 @@
 <?php
-namespace Slince\Console;
-
-use Slince\Console\Context\Input;
-use Slince\Console\Context\Output;
+namespace Slince\Console\Context;
 
 class Io
 {

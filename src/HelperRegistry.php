@@ -3,7 +3,7 @@ namespace Slince\Console;
 
 use Slince\Console\Helper\HelperInterface;
 
-class HelperRegistery
+class HelperRegistry
 {
 
     protected $loaded = [];
