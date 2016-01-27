@@ -2,6 +2,7 @@
 namespace Slince\Console\Context;
 
 use Slince\Console\Exception\RuntimeException;
+use Slince\Console\Exception\InvalidArgumentException;
 
 class Argv
 {
@@ -23,7 +24,7 @@ class Argv
 
     function __construct($argv, Definition $definition = null)
     {
-        // 排出脚本名称
+        // 排除脚本名称
         $this->scriptName = array_shift($argv);
         $this->tokens = $argv;
         if (! is_null($definition)) {
@@ -88,8 +89,10 @@ class Argv
     protected function parseArgument($token)
     {
         $index = count($this->arguments);
-        $argument = $this->definition->getArgumentByIndex($index);
-        $this->arguments[$argument->getName()] = $token;
+        try {
+            $argument = $this->definition->getArgumentByIndex($index);
+            $this->arguments[$argument->getName()] = $token;
+        } catch (InvalidArgumentException $e) {}
     }
 
     function addOption($name, $value)
@@ -133,6 +136,11 @@ class Argv
         return $this->arguments;
     }
 
+    function getArgument($name)
+    {
+        return isset($this->arguments[$name]) ? $this->arguments[$name] : null;
+    }
+    
     function setOptions(array $options)
     {
         $this->options = $options;
@@ -145,6 +153,6 @@ class Argv
 
     protected function getNextToken()
     {
-        return next($this->tokens);
+        return reset($this->tokens);
     }
 }

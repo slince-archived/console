@@ -2,10 +2,11 @@
 namespace Slince\Console;
 
 use Slince\Console\Helper\HelperInterface;
-
 use Slince\Console\Context\Io;
 use Slince\Console\Context\Argv;
 use Slince\Console\Context\Definition;
+use Slince\Console\Context\Argument;
+use Slince\Console\Context\Option;
 
 class Command implements CommandInterface
 {
@@ -32,10 +33,11 @@ class Command implements CommandInterface
      * @var Definition
      */
     protected $definition;
-    
+
     function __construct()
     {
         $this->definition = new Definition();
+        $this->configure();
     }
 
     function setConsole(Console $console)
@@ -48,21 +50,28 @@ class Command implements CommandInterface
         return $this->name;
     }
 
+    function configure()
+    {}
+
     function initialize(Io $io, Argv $argv)
-    {
-    }
+    {}
+
     function execute(Io $io, Argv $argv)
+    {}
+
+    function run(Io $io, Argv $argv)
     {
         $this->initialize($io, $argv);
+        $this->execute($io, $argv);
     }
 
-    function addOption($name, $valueModel, $description = null, $default = null)
+    function addOption($name, $valueMode, $description = null, $default = null)
     {
         $this->definition->addOption(new Option($name, $valueMode, $description, $default));
         return $this;
     }
 
-    function addArgument($name, $valueModel, $description = null, $default = null)
+    function addArgument($name, $valueMode, $description = null, $default = null)
     {
         $this->definition->addArgument(new Argument($name, $valueMode, $description, $default));
         return $this;
@@ -91,5 +100,12 @@ class Command implements CommandInterface
     function registerHelper($name, HelperInterface $helper)
     {
         $this->console->getHelperRegistry()->register($name, $helper);
+    }
+    
+    function clear()
+    {
+        if (PHP_OS == 'win') {
+            
+        }
     }
 }

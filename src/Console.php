@@ -78,4 +78,14 @@ class Console
     {
         return $this->argv->getFirstArgument();
     }
+    
+    function isWin()
+    {
+        return preg_match('/win/i', PHP_OS);
+    }
+    
+    function clear()
+    {
+        $this->isWin() ? shell_exec('cls') : shell_exec('clear');
+    }
 }

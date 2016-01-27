@@ -13,7 +13,7 @@ class ConfirmQuestion extends Question
             $this->trueRegex = $trueRegex;
         }
     }
-    
+
     function setTrueRegex($trueRegex)
     {
         $this->trueRegex = $trueRegex;
