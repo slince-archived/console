@@ -7,6 +7,18 @@ class HelperRegistry
 {
 
     protected $loaded = [];
+    
+    /**
+     * Console
+     * 
+     * @var Console
+     */
+    protected $console;
+    
+    function __construct(Console $console)
+    {
+        $this->console = $console;
+    }
 
     function load($name)
     {
@@ -30,7 +42,7 @@ class HelperRegistry
 
     protected function create($className)
     {
-        return new $className();
+        return new $className($this->console->getIo());
     }
 
     function register($name, HelperInterface $helper)

@@ -5,7 +5,7 @@ class Helper implements HelperInterface
 {
     protected $io;
     
-    function __construct($io)
+    function __construct($io = null)
     {
         $this->io = $io;
     }

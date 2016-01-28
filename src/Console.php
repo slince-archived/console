@@ -39,7 +39,7 @@ class Console
             $io = new Io(new Input(), new Output(), new Output('php://stderr'));
         }
         if (is_null($helperRegistry)) {
-            $helperRegistry = new HelperRegistry();
+            $helperRegistry = new HelperRegistry($this);
         }
         $this->helperRegistry = $helperRegistry;
         $this->io = $io;
@@ -77,6 +77,16 @@ class Console
     function getCommandName()
     {
         return $this->argv->getFirstArgument();
+    }
+    
+    /**
+     * 获取输入输出流
+     * 
+     * @return \Slince\Console\Context\Io
+     */
+    function getIo()
+    {
+        return $this->io;
     }
     
     function isWin()

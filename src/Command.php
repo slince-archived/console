@@ -11,13 +11,6 @@ use Slince\Console\Context\Option;
 class Command implements CommandInterface
 {
 
-    /**
-     * console
-     *
-     * @var Console
-     */
-    protected $console;
-
     protected $name;
 
     /**
@@ -33,6 +26,13 @@ class Command implements CommandInterface
      * @var Definition
      */
     protected $definition;
+
+    /**
+     * console
+     *
+     * @var Console
+     */
+    protected $console;
 
     function __construct()
     {
@@ -100,12 +100,5 @@ class Command implements CommandInterface
     function registerHelper($name, HelperInterface $helper)
     {
         $this->console->getHelperRegistry()->register($name, $helper);
-    }
-    
-    function clear()
-    {
-        if (PHP_OS == 'win') {
-            
-        }
     }
 }

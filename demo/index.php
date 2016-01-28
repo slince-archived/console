@@ -20,7 +20,7 @@ class SayHalloCommand extends Command
     function execute(Io $io, Argv $argv)
     {
         $answer = $this->getHelper('Question')->ask(new Question('Whats\'s your name'));
-        $this->io->out("Your name is {$answer}");
+        $io->out("Your name is {$answer}");
     }
 }
 
