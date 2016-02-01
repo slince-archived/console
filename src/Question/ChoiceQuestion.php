@@ -8,15 +8,15 @@ class ChoiceQuestion extends Question
 
     protected $choices = [];
 
-    protected $multiSelect;
+    protected $isMultiSelect;
 
     protected $multiAnswerGlue = ',';
 
-    function __construct($question, array $choices, $default = null, $multiSelect = false)
+    function __construct($question, array $choices, $default = null, $isMultiSelect = false)
     {
         parent::__construct($question, $default);
-        $this->$choices = $choices;
-        $this->multiSelect = $multiSelect;
+        $this->choices = $choices;
+        $this->isMultiSelect = $isMultiSelect;
         $this->setValidator([$this, 'validate']);
     }
 
@@ -42,7 +42,7 @@ class ChoiceQuestion extends Question
 
     function validate($answer)
     {
-        if (! $this->multiSelect) {
+        if (! $this->isMultiSelect) {
             return is_array($answer, $this->choices);
         }
         $choices = explode($this->multiAnswerGlue, $answer);

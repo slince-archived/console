@@ -8,17 +8,21 @@ interface QuestionInterface
 
     function getQuestion();
 
-    function setValidator($validator);
+    function setDefault($default);
 
-    function getValidator();
+    function getDefault();
 
     function setMaxAttempts($attempts);
 
     function getMaxAttempts();
 
-    function getDefault();
-
-    function setDefault($default);
-    
     function reduceMaxAttempts($step = 1);
+
+    function setValidator($validator);
+
+    function getValidator();
+
+    function setNormalizer($normalizer);
+
+    function getNormalizer();
 }

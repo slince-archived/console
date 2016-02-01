@@ -1,7 +1,7 @@
 <?php
 namespace Slince\Console\Question;
 
-use Slince\Application\Exception\LogicException;
+use Slince\Console\Exception\LogicException;
 
 class Question implements QuestionInterface
 {
@@ -13,6 +13,8 @@ class Question implements QuestionInterface
     protected $maxAttempts = 0;
     
     protected $validator;
+    
+    protected $normalizer;
 
     function __construct($question, $default = null)
     {
@@ -66,6 +68,19 @@ class Question implements QuestionInterface
     function getValidator()
     {
         return $this->validator;
+    }
+    
+    function setNormalizer($normalizer)
+    {
+        if (! is_callable($normalizer)) {
+            throw new LogicException('Normalizer have to be callable');
+        }
+        $this->normalizer = $normalizer;
+    }
+    
+    function getNormalizer()
+    {
+        return $this->normalizer;
     }
     
     function __toString()

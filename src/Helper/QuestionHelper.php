@@ -17,7 +17,14 @@ class QuestionHelper extends Helper
     function processAsk(QuestionInterface $question)
     {
         $this->io->out($question->getQuestion());
-        return $this->io->in();
+        $answer = $this->io->in();
+        if (empty($answer)) {
+            $answer = $question->getDefault();
+        }
+        if (($normalizer = $question->getNormalizer()) != null) {
+            return call_user_func($normalizer, $answer);
+        }
+        return $answer;
     }
 
     protected function validateAttempts(QuestionInterface $question)

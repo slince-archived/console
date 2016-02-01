@@ -9,13 +9,22 @@ class ConfirmQuestion extends Question
     function __construct($question, $default = null, $trueRegex = null)
     {
         parent::__construct($question, $default);
-        if (is_null($trueRegex)) {
+        if (! is_null($trueRegex)) {
             $this->trueRegex = $trueRegex;
         }
+        $this->setNormalizer([$this, 'normalize']);
     }
 
     function setTrueRegex($trueRegex)
     {
         $this->trueRegex = $trueRegex;
+    }
+    
+    function normalize($answer)
+    {
+        if (is_bool($answer)) {
+            return $answer;
+        }
+        return (bool)preg_match($this->trueRegex, $answer);
     }
 }
