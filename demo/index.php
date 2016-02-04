@@ -16,15 +16,16 @@ class SayHalloCommand extends Command
     
     function configure()
     {
-        $this->addArgument('name', Option::VALUE_REQUIRED);
-        $this->addArgument('name', Option::VALUE_REQUIRED);
+        $this->setDescription('Say hello to someone');
+//         $this->addArgument('name2', Option::VALUE_REQUIRED);
+//         $this->addArgument('age', Option::VALUE_OPTIONAL);
+        $this->addOption('yell', Option::VALUE_REQUIRED, 'if set will output uppercase');
     }
     function execute(Io $io, Argv $argv)
     {
-        /*
-         $answer = $this->getHelper('Question')->ask(new Question('Whats\'s your name: '));
-         $io->out("Your name is {$answer}");
-         */
+        
+//          $answer = $this->getHelper('Question')->ask(new Question('Whats\'s your name: '));
+//          $io->write("Your name is {$answer}");
         /*
         if($this->getHelper('Question')->ask(new ConfirmQuestion('Are you a boy?', true))){
             $io->out("Your choose true");
@@ -32,8 +33,12 @@ class SayHalloCommand extends Command
             $io->out("Your choose false");
         }
         */
-        $answer = $this->getHelper('Question')->ask(new ChoiceQuestion('Whats your favorite sports', ['baskerball', 'foot ball', 'ping pang']));
-        $io->out("You like {$answer}");
+        $question = new ChoiceQuestion('Whats your favorite sports', ['sddddd' => 'baskerball', 'foot ball', 'ping pang'], 'sddddd');
+        $question->setMaxAttempts(3);
+        $question->setMultiSelect(true);
+        $answer = $this->getHelper('Question')->ask($question);
+        print_r($answer);exit;
+        $io->write("You like {$answer}");
     }
 }
 

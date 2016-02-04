@@ -32,6 +32,11 @@ class Argv
         }
     }
 
+    function addTokens($tokens)
+    {
+        $this->tokens += $tokens;
+    }
+
     function getScriptName()
     {
         return $this->scriptName;
@@ -63,7 +68,7 @@ class Argv
         if (strpos($name, '=') !== false) {
             list ($name, $value) = explode('=', $name);
         }
-        $this->addOption($name, $value);
+        $this->addNewOption($name, $value);
     }
 
     protected function parseShortOption($token)
@@ -83,7 +88,7 @@ class Argv
                 }
             }
         }
-        $this->addOption($name, $value);
+        $this->addNewOption($name, $value);
     }
 
     protected function parseArgument($token)
@@ -95,7 +100,7 @@ class Argv
         } catch (InvalidArgumentException $e) {}
     }
 
-    function addOption($name, $value)
+    protected function addNewOption($name, $value)
     {
         $option = $this->definition->getOption($name);
         if (is_null($value)) {
@@ -131,6 +136,16 @@ class Argv
         $this->arguments = $arguments;
     }
 
+    function addArguments(array $arguments)
+    {
+        $this->arguments = array_merge($this->arguments, $arguments);
+    }
+
+    function addArgument($name, $argument)
+    {
+        $this->arguments[$name] = $argument;
+    }
+
     function getArguments()
     {
         return $this->arguments;
@@ -140,15 +155,36 @@ class Argv
     {
         return isset($this->arguments[$name]) ? $this->arguments[$name] : null;
     }
-    
+
     function setOptions(array $options)
     {
         $this->options = $options;
     }
 
+    function addOptions(array $options)
+    {
+        $this->options = array_merge($this->options, $options);
+    }
+
+    function addOption($name, $option)
+    {
+        $this->options[$name] = $option;
+    }
+
     function getOptions()
     {
         return $this->options;
+    }
+
+    function getOption($name)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
+
+    function hasOptionParameter($parameters)
+    {
+        $parameters = (array) $parameters;
+        return ! empty(array_intersect($this->tokens, $parameters));
     }
 
     protected function getNextToken()

@@ -16,6 +16,7 @@ class Output
 
     function write($message, $newLine = false)
     {
+        $message = strval($message);
         if ($newLine) {
             $message .= PHP_EOL;
         }

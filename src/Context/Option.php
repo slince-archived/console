@@ -45,7 +45,7 @@ class Option
     {
         return $this->valueMode === self::VALUE_OPTIONAL;
     }
-    
+
     function isValueNone()
     {
         return $this->valueMode === self::VALUE_NONE;
@@ -55,15 +55,15 @@ class Option
     {
         return $this->description;
     }
-    
+
     /**
      * 单字母被认为是短option
-     * 
+     *
      * @return boolean
      */
     function isShort()
     {
-        return strlen($name) == 1;
+        return strlen($this->name) == 1;
     }
 
     function getDefault()

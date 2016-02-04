@@ -11,6 +11,11 @@ use Slince\Console\Context\Option;
 class Command implements CommandInterface
 {
 
+    /**
+     * name
+     * 
+     * @var string
+     */
     protected $name;
 
     /**
@@ -26,6 +31,8 @@ class Command implements CommandInterface
      * @var Definition
      */
     protected $definition;
+    
+    protected $description;
 
     /**
      * console
@@ -37,6 +44,7 @@ class Command implements CommandInterface
     function __construct()
     {
         $this->definition = new Definition();
+        $this->help = new Help();
         $this->configure();
     }
 
@@ -77,6 +85,18 @@ class Command implements CommandInterface
         return $this;
     }
 
+    function setDescription($description)
+    {
+        $this->description = $description;
+    
+        return $this;
+    }
+    
+    function getDescription()
+    {
+        return $this->description;
+    }
+    
     function setHelp(Help $help)
     {
         $this->help = $help;

@@ -4,14 +4,19 @@ namespace Slince\Console;
 class Help
 {
 
-    protected $description;
-
-    protected $summary;
-
     protected $usage;
 
-    protected $default;
-
+    protected $argumentHelps = [];
+    
+    protected $optionHelps = [];
+    
+    protected $description;
+    
+    function __toString()
+    {
+        return $this->render();
+    }
+    
     /**
      *
      * Sets the single-line summary.
@@ -67,7 +72,61 @@ class Help
         return $this->description;
     }
     
+    function setArgumentHelps($argumentHelps)
+    {
+        $this->argumentHelps = $argumentHelps;
+    }
+    
+    function setOptionHelps($optionHelps)
+    {
+        $this->optionHelps = $optionHelps;
+    }
+    
+    function getOptionHelps()
+    {
+        return $this->optionHelps;
+    }
+    
+    function getArgumentsHelp()
+    {
+        return $this->buildArgumentsOrOptionsHelp($this->argumentHelps);
+    }
+    
+    function getOptionsHelp()
+    {
+        return $this->buildArgumentsOrOptionsHelp($this->optionHelps);
+    }
+    
+    function buildArgumentsOrOptionsHelp($parameters)
+    {
+        if (empty($parameters)) {
+            return '';
+        }
+        $keyMaxWidth = max(array_map('strlen', array_keys($parameters)));
+        $helps = [];
+        foreach ($parameters as $key => $parameter) {
+            $helps[] = sprintf("%-{$keyMaxWidth}s    %s", $key, $parameter);
+        }
+        return implode(PHP_EOL, $helps);
+    }
+    
     function render()
     {
+        $argumentsHelp = $this->getArgumentsHelp() ?: 'None';
+        $optionsHelp = $this->getOptionsHelp() ?: 'None';
+        return <<<EOT
+Usage:
+  {$this->usage}
+
+Options:
+  {$optionsHelp}
+
+Arguments:
+  {$argumentsHelp}
+
+Description:
+  {$this->description}
+
+EOT;
     }
 }

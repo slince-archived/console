@@ -6,11 +6,13 @@ use Slince\Console\Context\Io;
 use Slince\Console\Context\Argv;
 use Slince\Console\Context\Input;
 use Slince\Console\Context\Output;
+use Slince\Console\Context\Definition;
+use Slince\Console\Context\Option;
 
 class Console
 {
 
-    protected $commends = [];
+    protected $commands = [];
 
     /**
      * stdio
@@ -53,7 +55,7 @@ class Console
     function addCommand(CommandInterface $command)
     {
         $command->setConsole($this);
-        $this->commends[$command->getName()] = $command;
+        $this->commands[$command->getName()] = $command;
     }
 
     function run(Argv $argv = null)
@@ -63,14 +65,18 @@ class Console
         }
         $this->argv = $argv;
         $name = $this->getCommandName();
-        if (isset($this->commends[$name])) {
-            $this->runCommand($this->commends[$name]);
+        if ($argv->hasOptionParameter(['-h', '--help'])) {
+            $this->addCommand(new HelpCommand());
+            $this->argv->addArgument('command_name', $name);
+            $name = 'help';
         }
+        $command = $this->find($name);
+        $this->runCommand($command);
     }
 
     function runCommand(CommandInterface $command)
     {
-        $this->argv->bind($command->getDefinition());
+        $this->argv->bind($command->getDefinition()->merge($this->getDefaultDefinition()));
         return $command->execute($this->io, $this->argv);
     }
     
@@ -79,11 +85,21 @@ class Console
         return $this->argv->getFirstArgument();
     }
     
-    /**
-     * 获取输入输出流
-     * 
-     * @return \Slince\Console\Context\Io
-     */
+    function find($name)
+    {
+        if (isset($this->commands[$name])) {
+            return $this->commands[$name];
+        }
+    }
+    
+    function getDefaultDefinition()
+    {
+        return new Definition([
+            new Option('h', Option::VALUE_NONE),
+            new Option('help', Option::VALUE_NONE)
+        ]);
+    }
+    
     function getIo()
     {
         return $this->io;

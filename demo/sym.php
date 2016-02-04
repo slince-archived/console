@@ -23,13 +23,18 @@ class GreetCommand extends Command
         ->setDescription('Greet someone')
         ->addArgument(
             'name',
+            InputArgument::REQUIRED,
+            'Who do you want to greet?'
+        )
+        ->addArgument(
+            'age',
             InputArgument::OPTIONAL,
             'Who do you want to greet?'
         )
         ->addOption(
             'yell',
             null,
-            InputOption::VALUE_NONE,
+            InputOption::VALUE_REQUIRED,
             'If set, the task will yell in uppercase letters'
         )
         ;
@@ -54,7 +59,7 @@ class GreetCommand extends Command
 
         $question = new ChoiceQuestion(
             'Please select your favorite color (defaults to red)',
-            array('a' => 'red', 'blue', 'yellow'),
+            array('asssssssssss' => 'red', 'blue', 'yellow'),
             0
         );
         $question->setErrorMessage('Color %s is invalid.');
@@ -63,8 +68,7 @@ class GreetCommand extends Command
         $output->writeln('You have just selected: '.$color);
         $question = new ChoiceQuestion(
             'Please select your favorite colors (defaults to red and blue)',
-            array('red', 'blue', 'yellow'),
-            '0,1'
+            array('red', 'blue', 'yellow')
         );
         $question->setMultiselect(true);
         

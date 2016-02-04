@@ -17,17 +17,17 @@ class Io
         $this->err = $err;
     }
 
-    public function in()
+    public function read()
     {
         return rtrim($this->in->read(), PHP_EOL);
     }
 
-    function out($message)
+    function write($message)
     {
         $this->out->write($message);
     }
 
-    function outln($message)
+    function writeln($message)
     {
         $this->out->write($message, true);
     }

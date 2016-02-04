@@ -9,16 +9,16 @@ class QuestionHelper extends Helper
     function ask(QuestionInterface $question)
     {
         if ($question->getValidator() == null) {
-            return $this->processAsk($question);
+            $answer = $this->processAsk($question);
         }
         return $this->validateAttempts($question);
     }
 
     function processAsk(QuestionInterface $question)
     {
-        $this->io->out($question->getQuestion());
-        $answer = $this->io->in();
-        if (empty($answer)) {
+        $this->io->write($question);
+        $answer = $this->io->read();
+        if ($answer == '') {
             $answer = $question->getDefault();
         }
         if (($normalizer = $question->getNormalizer()) != null) {
@@ -30,15 +30,15 @@ class QuestionHelper extends Helper
     protected function validateAttempts(QuestionInterface $question)
     {
         $e = null;
-        while ($question->getMaxAttempts() > 0) {
+        do {
             $answer = $this->processAsk($question);
             try {
-                if (call_user_func($question->getValidator(), $answer)) {
-                    return $answer;
-                }
-            } catch (\Exception $e) {}
+                return call_user_func($question->getValidator(), $answer);
+            } catch (\Exception $e) {
+                $this->io->writeln($e->getMessage());
+            }
             $question->reduceMaxAttempts();
-        }
+        } while ($question->getMaxAttempts() > 0);
         return $e;
     }
 }
