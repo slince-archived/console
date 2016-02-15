@@ -10,13 +10,15 @@ use Slince\Console\Context\Option;
 
 class HelpCommand extends Command
 {
+    
+    const COMMAND_NAME = 'help';
 
-    protected $name = 'help';
+    protected $name = self::COMMAND_NAME;
 
     function configure()
     {
         $this->name = 'help';
-        $this->addOption('command_name', Option::VALUE_REQUIRED);
+        $this->addArgument('command_name', Option::VALUE_REQUIRED);
     }
 
     function execute(Io $io, Argv $argv)

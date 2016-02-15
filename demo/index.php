@@ -17,8 +17,8 @@ class SayHalloCommand extends Command
     function configure()
     {
         $this->setDescription('Say hello to someone');
-//         $this->addArgument('name2', Option::VALUE_REQUIRED);
-//         $this->addArgument('age', Option::VALUE_OPTIONAL);
+        $this->addArgument('name2', Option::VALUE_REQUIRED);
+        $this->addArgument('age', Option::VALUE_OPTIONAL);
         $this->addOption('yell', Option::VALUE_REQUIRED, 'if set will output uppercase');
     }
     function execute(Io $io, Argv $argv)

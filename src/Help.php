@@ -105,7 +105,7 @@ class Help
         $keyMaxWidth = max(array_map('strlen', array_keys($parameters)));
         $helps = [];
         foreach ($parameters as $key => $parameter) {
-            $helps[] = sprintf("%-{$keyMaxWidth}s    %s", $key, $parameter);
+            $helps[] = sprintf("  %-{$keyMaxWidth}s    %s", $key, $parameter);
         }
         return implode(PHP_EOL, $helps);
     }
@@ -119,10 +119,10 @@ Usage:
   {$this->usage}
 
 Options:
-  {$optionsHelp}
+{$optionsHelp}
 
 Arguments:
-  {$argumentsHelp}
+{$argumentsHelp}
 
 Description:
   {$this->description}
