@@ -21,16 +21,16 @@ class GreetCommand extends Command
         $this
         ->setName('hello')
         ->setDescription('Greet someone')
-        ->addArgument(
-            'name',
-            InputArgument::REQUIRED,
-            'Who do you want to greet?'
-        )
-        ->addArgument(
-            'age',
-            InputArgument::OPTIONAL,
-            'Who do you want to greet?'
-        )
+//         ->addArgument(
+//             'name',
+//             InputArgument::REQUIRED,
+//             'Who do you want to greet?'
+//         )
+//         ->addArgument(
+//             'age',
+//             InputArgument::OPTIONAL,
+//             'Who do you want to greet?'
+//         )
         ->addOption(
             'yell',
             null,
@@ -53,9 +53,11 @@ class GreetCommand extends Command
 //         }
 //         $output->writeln($text);
         $helper = $this->getHelper('question');
-//         $question = new Question('Please enter the name of the bundle', 'AcmeDemoBundle');
-//         $bundle = $helper->ask($input, $output, $question);
-//         $output->writeln($bundle);
+        $output = shell_exec('color a1');
+        echo "<pre>$output</pre>";
+        $question = new Question('<error>Please enter the name of the bundle</error>', 'AcmeDemoBundle');
+        $bundle = $helper->ask($input, $output, $question);
+        $output->writeln($bundle);
 
         $question = new ChoiceQuestion(
             'Please select your favorite color (defaults to red)',

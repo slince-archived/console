@@ -18,7 +18,7 @@ class HelpCommand extends Command
     function configure()
     {
         $this->name = 'help';
-        $this->addArgument('command_name', Option::VALUE_REQUIRED);
+        $this->addArgument('command_name', Option::VALUE_REQUIRED, 'The command name');
     }
 
     function execute(Io $io, Argv $argv)

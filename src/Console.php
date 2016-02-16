@@ -89,6 +89,9 @@ class Console
             $exitCode = $e->getCode();
         }
         $exitCode = intval($exitCode);
+        if ($exitCode > 255) {
+            $exitCode = 255;
+        }
         exit($exitCode);
     }
 
@@ -144,8 +147,8 @@ class Console
     protected function getDefaultDefinition()
     {
         return new Definition([
-            new Option('h', Option::VALUE_NONE),
-            new Option('help', Option::VALUE_NONE)
+            new Option('h', Option::VALUE_NONE, 'Display this help message'),
+            new Option('help', Option::VALUE_NONE, 'Display this help message')
         ]);
     }
     

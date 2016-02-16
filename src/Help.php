@@ -118,11 +118,11 @@ class Help
 Usage:
   {$this->usage}
 
-Options:
-{$optionsHelp}
-
 Arguments:
 {$argumentsHelp}
+
+Options:
+{$optionsHelp}
 
 Description:
   {$this->description}
