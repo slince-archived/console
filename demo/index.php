@@ -25,7 +25,7 @@ class SayHalloCommand extends Command
     {
         
         $answer = $this->getHelper('Question')
-            ->ask(new Question('ha<success>Whats\'s <info>your</info> name:</success>ha'));
+            ->ask(new Question('ha<success>Whats\'s your name:</success>ha'));
         $io->write("Your name is {$answer}");
         return 0;
         /*

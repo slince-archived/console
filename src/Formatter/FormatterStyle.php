@@ -107,21 +107,29 @@ abstract class FormatterStyle
         preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
         $processedMessage = '';
         $start = 0;
+        $label = false;
         $open = false;
         foreach ($matches[0] as $key => $match) {
+            $pos = $match[1];
+            if ($label === false) {
+                $processedMessage .= substr($message, $start, $pos - $start);
+            } else {
+                if ($currentLabel{0} == '/') {
+                    continue;
+                }
+                $processedMessage .= $this->applyLabelStyle($label, substr($message, $start, $pos - $start));
+                $currentLabel = $matches[1][$key][0];
+                if ($open) {
+                    
+                }
+            }
             $label = $matches[1][$key][0];
             $text = $match[0];
-            $pos = $match[1];
-            if ($pos == 0) {
-                continue;
-            }
-            if ($label{0} != '/') {
-                $open = true;
-            }
-            $length = $pos - $start;
-            $processedMessage .= $this->applyLabelStyle($label, substr($message, $start, $length));
+            $open = $label{0} != '/';
             $start += strlen($match[0]);
+            $label = ltrim($label, '/');
         }
+        return $processedMessage;
     }
     abstract function configureLabelStyle();
 }
