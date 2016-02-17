@@ -1,5 +1,5 @@
 <?php
-namespace Slince\Console\Formatter\Label;
+namespace Slince\Console\Formatter;
 
 class Label
 {

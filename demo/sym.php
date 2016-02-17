@@ -36,8 +36,7 @@ class GreetCommand extends Command
             null,
             InputOption::VALUE_REQUIRED,
             'If set, the task will yell in uppercase letters'
-        )
-        ;
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -53,26 +52,23 @@ class GreetCommand extends Command
 //         }
 //         $output->writeln($text);
         $helper = $this->getHelper('question');
-        $output = shell_exec('color a1');
-        echo "<pre>$output</pre>";
-        $question = new Question('<error>Please enter the name of the bundle</error>', 'AcmeDemoBundle');
+        $question = new Question('<error>Please enter <info>the name of the bundle</error></info>');
         $bundle = $helper->ask($input, $output, $question);
-        $output->writeln($bundle);
 
-        $question = new ChoiceQuestion(
-            'Please select your favorite color (defaults to red)',
-            array('asssssssssss' => 'red', 'blue', 'yellow'),
-            0
-        );
-        $question->setErrorMessage('Color %s is invalid.');
+//         $question = new ChoiceQuestion(
+//             'Please select your favorite color (defaults to red)',
+//             array('asssssssssss' => 'red', 'blue', 'yellow'),
+//             0
+//         );
+//         $question->setErrorMessage('Color %s is invalid.');
         
-        $color = $helper->ask($input, $output, $question);
-        $output->writeln('You have just selected: '.$color);
-        $question = new ChoiceQuestion(
-            'Please select your favorite colors (defaults to red and blue)',
-            array('red', 'blue', 'yellow')
-        );
-        $question->setMultiselect(true);
+//         $color = $helper->ask($input, $output, $question);
+//         $output->writeln('You have just selected: '.$color);
+//         $question = new ChoiceQuestion(
+//             'Please select your favorite colors (defaults to red and blue)',
+//             array('red', 'blue', 'yellow')
+//         );
+//         $question->setMultiselect(true);
         
 //         $colors = $helper->ask($input, $output, $question);
 //         $output->writeln('You have just selected: ' . implode(', ', $colors));

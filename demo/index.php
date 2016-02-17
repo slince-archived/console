@@ -24,8 +24,10 @@ class SayHalloCommand extends Command
     function execute(Io $io, Argv $argv)
     {
         
-//          $answer = $this->getHelper('Question')->ask(new Question('Whats\'s your name: '));
-//          $io->write("Your name is {$answer}");
+        $answer = $this->getHelper('Question')
+            ->ask(new Question('ha<success>Whats\'s <info>your</info> name:</success>ha'));
+        $io->write("Your name is {$answer}");
+        return 0;
         /*
         if($this->getHelper('Question')->ask(new ConfirmQuestion('Are you a boy?', true))){
             $io->out("Your choose true");
