@@ -6,9 +6,9 @@ class DefaultFormatterStyle extends FormatterStyle
 
     function configureLabelStyle()
     {
-        $this->getLabel('success')->getForegroundColor('green');
-        $this->getLabel('error')->getForegroundColor('red');
-        $this->getLabel('warning')->getForegroundColor('yellow');
-        $this->getLabel('info')->getForegroundColor('default');
+        $this->getLabel('success')->setForegroundColor('green');
+        $this->getLabel('error')->setForegroundColor('red');
+        $this->getLabel('warning')->setForegroundColor('yellow');
+        $this->getLabel('info')->setForegroundColor('default');
     }
 }

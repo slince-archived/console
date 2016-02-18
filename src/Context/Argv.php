@@ -184,7 +184,8 @@ class Argv
     function hasOptionParameter($parameters)
     {
         $parameters = (array) $parameters;
-        return ! empty(array_intersect($this->tokens, $parameters));
+        $results = array_intersect($this->tokens, $parameters);
+        return ! empty($results);
     }
 
     protected function getNextToken()

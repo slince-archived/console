@@ -57,7 +57,8 @@ class HelpCommand extends Command
             $argumentsUsages[] = $usage;
         }
         $usages[] = $command->getName();
-        if ($haveOptions = ! empty($command->getDefinition()->getOptions())) {
+        $options = $command->getDefinition()->getOptions();
+        if ($haveOptions = ! empty($options)) {
             $usages[] = '[options]';
         }
         if (! empty($argumentsUsages)) {

@@ -133,6 +133,13 @@ class Formatter
         $this->fontStyles[] = self::$availableFontStyles[$fontStyle];
     }
 
+    function resetStyle()
+    {
+        $this->foregroundColor = null;
+        $this->backgroundColor = null;
+        $this->fontStyles = [];
+    }
+    
     function apply($text)
     {
         $codes = [];

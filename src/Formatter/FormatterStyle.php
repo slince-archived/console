@@ -61,10 +61,11 @@ abstract class FormatterStyle
     function applyLabelStyle($name, $message)
     {
         $label = $this->getLabel($name);
-        if ($color = $label->getBackgroundColor() != null) {
+        $this->formatter->resetStyle();
+        if (($color = $label->getBackgroundColor()) != null) {
             $this->formatter->setBackgroundColor($color);
         }
-        if ($color = $label->getForegroundColor() != null) {
+        if (($color = $label->getForegroundColor()) != null) {
             $this->formatter->setForegroundColor($color);
         }
         if ($fontStyles = $label->getFontStyles()) {
@@ -72,63 +73,85 @@ abstract class FormatterStyle
         }
         return $this->formatter->apply($message);
     }
-    
-    function stylize2($message)
-    {
-        $tagRegex = implode('|', $this->getAvaliableLabels());
-        preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
-        $beginPositions = [];
-        $positions = [];
-        foreach ($matches[1] as $key => $match) {
-            list($label,) = $match;
-            $label = ltrim($label, '/');
-            if (! isset($positions[$label])) {
-                $beginPositions[$label] = [];
-                $positions[$label] = [];
-            }
-            $beginPositions[$label][] = $matches[0][$key][1];
-            $positions[$label][] = $matches[0][$key][1] + strlen($matches[0][$key][0]);
-        }
-        $formatedValues = [];
-        $messageFormatPattern = $message;
-        foreach ($positions as $label => $position) {
-            $formatedValues[] = $this->applyLabelStyle($label, substr($message, $position[0], $beginPositions[$label][1] - $position[0]));
-            $messageFormatPattern = substr_replace($messageFormatPattern, '%s',
-                $beginPositions[$label][0],
-                $position[1] - $beginPositions[$label][0]
-            );
-        }
-        return vsprintf($messageFormatPattern, $formatedValues);
-    }
-    
+
+    /*
+     * 如果上一个是开标签,则下一个遇到的标签只能上一个标签的闭合标签或者是另外一个开标签
+    * 如果上一个标签是闭合标签，则下一个标签只能是开标签或者另外一个标签的闭合标签
+    *  I say <success>hello <info>world</info>!</success> ha ha
+    *  错误的做法：
+    *  I say <success>hello <info>world<info>!</info></info></success> ha ha
+    *  <success>hello <success>world</success></success>
+    *  <success>hello <info>world</success></info>
+    *  'ha<success>Whats <info>your</info> name:</success>ha'
+    */
     function stylize($message)
     {
         $tagRegex = implode('|', $this->getAvaliableLabels());
         preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, PREG_OFFSET_CAPTURE);
         $processedMessage = '';
-        $start = 0;
-        $label = false;
-        $open = false;
+        $start = 0; //字符串本次处理的开始偏移量
+        $lastLabel = false; //上一个标签名
+        $lastLabelOpen = false; //上一个标签是否是开标签
         foreach ($matches[0] as $key => $match) {
-            $pos = $match[1];
-            if ($label === false) {
-                $processedMessage .= substr($message, $start, $pos - $start);
-            } else {
-                if ($currentLabel{0} == '/') {
-                    continue;
+            $pos = $match[1]; //当前标签的偏移量
+            $currentLabelClose = $matches[1][$key][0]{0} == '/'; //当前标签闭合
+            $currentLabel = ltrim($matches[1][$key][0], '/');  //当前标签名
+            //如果没有上一个标签或者之前的标签已经完成闭合
+            if ($lastLabel === false) {
+                /*
+                 * 如果当前标签是闭合标签，则将开始偏移位置到本标签的偏移位置的字符应用成当前闭合标签的样式
+                 * 并且完成所有标签的闭合工作
+                 */
+                if ($currentLabelClose) {
+                    $processedMessage .= $this->applyLabelStyle($currentLabel, substr($message, $start, $pos - $start));
+                    $lastLabel = false;
+                    $lastLabelOpen = false;
+                    $start = $pos + strlen($match[0]);
+                } else {
+                    /*
+                     * 如果当前标签是个开标签，那么开始偏移位置到本标签的偏移位置的字符串不应用样式
+                     * 本标签更新成上个标签
+                     */
+                    $processedMessage .= substr($message, $start, $pos - $start);
+                    $lastLabel = $matches[1][$key][0];
+                    $lastLabelOpen = $lastLabel{0} != '/';
+                    $lastLabel = ltrim($lastLabel, '/');
+                    $start = $pos + strlen($match[0]);
                 }
-                $processedMessage .= $this->applyLabelStyle($label, substr($message, $start, $pos - $start));
-                $currentLabel = $matches[1][$key][0];
-                if ($open) {
-                    
+            } else { //如果上个标签存在
+                //如果上个标签是开标签
+                if ($lastLabelOpen) {
+                    //如果本标签是关闭的并且和上个标签一样，应用当前标签样式，并且完成标签闭合
+                    if ($currentLabelClose && $lastLabel == $currentLabel) {
+                        $processedMessage .= $this->applyLabelStyle($currentLabel, substr($message, $start, $pos - $start));
+                        $lastLabel = false;
+                        $lastLabelOpen = false;
+                        $start = $pos + strlen($match[0]);
+                    }
+                    if (! $currentLabelClose) {
+                        $processedMessage .= $this->applyLabelStyle($lastLabel, substr($message, $start, $pos - $start));
+                        $lastLabel = $matches[1][$key][0];
+                        $lastLabelOpen = $lastLabel{0} != '/';
+                        $lastLabel = ltrim($lastLabel, '/');
+                        $start = $pos + strlen($match[0]);
+                    }
+                } else {
+                    if ($currentLabelClose) {
+                        $processedMessage .= $this->applyLabelStyle($currentLabel, substr($message, $start, $pos - $start));
+                        $lastLabel = false;
+                        $lastLabelOpen = false;
+                        $start += strlen($match[0]);
+                    } else {
+                        $lastLabel = $matches[1][$key][0];
+                        $lastLabelOpen = $lastLabel{0} != '/';
+                        $lastLabel = ltrim($lastLabel, '/');
+                        $start = $pos + strlen($match[0]);
+                    }
                 }
             }
-            $label = $matches[1][$key][0];
-            $text = $match[0];
-            $open = $label{0} != '/';
-            $start += strlen($match[0]);
-            $label = ltrim($label, '/');
         }
+        $processedMessage .= substr($message, $start, strlen($message) - $start);
+        echo $processedMessage;exit;
         return $processedMessage;
     }
     abstract function configureLabelStyle();
