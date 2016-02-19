@@ -1,4 +1,8 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
 namespace Slince\Console\Formatter;
 
 use Slince\Console\Exception\InvalidArgumentException;
@@ -55,12 +59,32 @@ use Slince\Console\Exception\InvalidArgumentException;
 class Formatter
 {
 
+    /**
+     * 起始转移字符
+     * 
+     * @var string
+     */
     const ESC = "\033[";
 
+    /**
+     * 转义pattern
+     * 
+     * @var string
+     */
     const ESC_SEQ_PATTERN = "\033[%sm";
 
+    /**
+     * 重置的code码
+     * 
+     * @var int
+     */
     const RESET = 0;
 
+    /**
+     * 前景色码
+     * 
+     * @var array
+     */
     protected static $availableForegroundColors = [
         'black' => 30,
         'red' => 31,
@@ -73,6 +97,11 @@ class Formatter
         'default' => 39
     ];
 
+    /**
+     * 背景色码
+     * 
+     * @var array
+     */
     protected static $availableBackgroundColors = [
         'black' => 40,
         'red' => 41,
@@ -85,6 +114,11 @@ class Formatter
         'default' => 49
     ];
 
+    /**
+     * 字体类型
+     * 
+     * @var array
+     */
     protected static $availableFontStyles = [
         'bold' => 1,
         'dark' => 2,
@@ -95,12 +129,33 @@ class Formatter
         'concealed' => 8
     ];
 
+    /**
+     * 当前前景色
+     * 
+     * @var string
+     */
     protected $foregroundColor;
 
+    /**
+     * 当前背景色
+     * 
+     * @var string
+     */
     protected $backgroundColor;
 
+    /**
+     * 当前字体风格
+     * 
+     * @var array
+     */
     protected $fontStyles = [];
 
+    /**
+     * 设置背景色
+     * 
+     * @param string $color
+     * @throws InvalidArgumentException
+     */
     function setBackgroundColor($color)
     {
         if (! isset(self::$availableBackgroundColors[$color])) {
@@ -109,6 +164,12 @@ class Formatter
         $this->backgroundColor = self::$availableBackgroundColors[$color];
     }
 
+    /**
+     * 设置前景色
+     * 
+     * @param string $color
+     * @throws InvalidArgumentException
+     */
     function setForegroundColor($color)
     {
         if (! isset(self::$availableForegroundColors[$color])) {
@@ -117,6 +178,11 @@ class Formatter
         $this->foregroundColor = self::$availableForegroundColors[$color];
     }
 
+    /**
+     * 设置字体风格
+     * 
+     * @param array $fontStyles
+     */
     function setFontStyles($fontStyles)
     {
         $this->fontStyles = [];
@@ -125,6 +191,12 @@ class Formatter
         }
     }
 
+    /**
+     * 添加一个字体风格
+     * 
+     * @param string $fontStyle
+     * @throws InvalidArgumentException
+     */
     function addFontStyle($fontStyle)
     {
         if (! isset(self::$availableFontStyles[$fontStyle])) {
@@ -133,6 +205,9 @@ class Formatter
         $this->fontStyles[] = self::$availableFontStyles[$fontStyle];
     }
 
+    /**
+     * 重置所有样式
+     */
     function resetStyle()
     {
         $this->foregroundColor = null;
@@ -140,6 +215,12 @@ class Formatter
         $this->fontStyles = [];
     }
     
+    /**
+     * 应用样式到文字
+     * 
+     * @param string $text
+     * @return string
+     */
     function apply($text)
     {
         $codes = [];

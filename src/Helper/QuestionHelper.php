@@ -1,4 +1,8 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
 namespace Slince\Console\Helper;
 
 use Slince\Console\Question\QuestionInterface;
@@ -6,6 +10,12 @@ use Slince\Console\Question\QuestionInterface;
 class QuestionHelper extends Helper
 {
 
+    /**
+     * 向控制输出问题并验证答案
+     * 
+     * @param QuestionInterface $question
+     * @return Ambigous <mixed, Exception>
+     */
     function ask(QuestionInterface $question)
     {
         if ($question->getValidator() == null) {
@@ -14,7 +24,13 @@ class QuestionHelper extends Helper
         return $this->validateAttempts($question);
     }
 
-    function processAsk(QuestionInterface $question)
+    /**
+     * 开始处理提问
+     * 
+     * @param QuestionInterface $question
+     * @return mixed|string
+     */
+    protected function processAsk(QuestionInterface $question)
     {
         $this->io->write($question);
         $answer = $this->io->read();
@@ -27,6 +43,12 @@ class QuestionHelper extends Helper
         return $answer;
     }
 
+    /**
+     * 多次尝试问问题
+     * 
+     * @param QuestionInterface $question
+     * @return mixed|Exception
+     */
     protected function validateAttempts(QuestionInterface $question)
     {
         $e = null;

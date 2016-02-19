@@ -1,4 +1,8 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
 namespace Slince\Console\Formatter;
 
 use Slince\Console\Exception\InvalidArgumentException;
@@ -7,6 +11,11 @@ use Slince\Console\Formatter\Label;
 abstract class FormatterStyle
 {
 
+    /**
+     * 注册的标签
+     * 
+     * @var array
+     */
     protected static $registerLabels = [
         'success' => '\\Slince\\Console\\Formatter\\Label',
         'error' => '\\Slince\\Console\\Formatter\\Label',
@@ -14,8 +23,18 @@ abstract class FormatterStyle
         'info' => '\\Slince\\Console\\Formatter\\Label'
     ];
 
+    /**
+     * 标签实例
+     * 
+     * @var array
+     */
     protected $labels;
     
+    /**
+     * formatter
+     * 
+     * @var Formatter
+     */
     protected $formatter;
 
     function __construct()
@@ -24,7 +43,13 @@ abstract class FormatterStyle
         $this->configureLabelStyle();
     }
 
-    protected static function registerLabel($name, $className)
+    /**
+     * 注册全局的label
+     * 
+     * @param string $name
+     * @param string $className
+     */
+    static function registerLabel($name, $className)
     {
         self::$registerLabels[$name] = $className;
     }
@@ -47,17 +72,34 @@ abstract class FormatterStyle
         return $this->labels[$name] = new self::$registerLabels[$name]();
     }
 
+    /**
+     * 创建一个标签
+     * 
+     * @param strng $name
+     * @return \Slince\Console\Formatter\Label
+     */
     function createLabel($name)
     {
         return $this->labels[$name] = new Label();
     }
 
+    /**
+     * 获取可用的label
+     * 
+     * @return array
+     */
     function getAvaliableLabels()
     {
         return array_keys(self::$registerLabels) +
             array_keys($this->labels);
     }
     
+    /**
+     * 应用标签样式到消息
+     * 
+     * @param string $name
+     * @param string $message
+     */
     function applyLabelStyle($name, $message)
     {
         $label = $this->getLabel($name);
@@ -74,16 +116,17 @@ abstract class FormatterStyle
         return $this->formatter->apply($message);
     }
 
-    /*
+    /**
      * 如果上一个是开标签,则下一个遇到的标签只能上一个标签的闭合标签或者是另外一个开标签
-    * 如果上一个标签是闭合标签，则下一个标签只能是开标签或者另外一个标签的闭合标签
-    *  I say <success>hello <info>world</info>!</success> ha ha
-    *  错误的做法：
-    *  I say <success>hello <info>world<info>!</info></info></success> ha ha
-    *  <success>hello <success>world</success></success>
-    *  <success>hello <info>world</success></info>
-    *  'ha<success>Whats <info>your</info> name:</success>ha'
-    */
+     * 如果上一个标签是闭合标签，则下一个标签只能是开标签或者另外一个标签的闭合标签
+     * 暂时只支持一级标签嵌套
+     * I say <success>hello <info>world</info>!</success> ha ha
+     * 错误的做法：
+     * I say <success>hello <info>world<info>!</info></info></success> ha ha
+     * <success>hello <success>world</success></success>
+     * <success>hello <info>world</success></info>
+     * 'ha<success>Whats <info>your</info> name:</success>ha'
+     */
     function stylize($message)
     {
         $tagRegex = implode('|', $this->getAvaliableLabels());
@@ -128,6 +171,7 @@ abstract class FormatterStyle
                         $lastLabelOpen = false;
                         $start = $pos + strlen($match[0]);
                     }
+                    //如果本标签是未闭合的开标签，应用上一个标签样式
                     if (! $currentLabelClose) {
                         $processedMessage .= $this->applyLabelStyle($lastLabel, substr($message, $start, $pos - $start));
                         $lastLabel = $matches[1][$key][0];
@@ -135,7 +179,8 @@ abstract class FormatterStyle
                         $lastLabel = ltrim($lastLabel, '/');
                         $start = $pos + strlen($match[0]);
                     }
-                } else {
+                } else { //如果上一个标签是闭合的
+                    //如果本标签也是闭合的，应用当前标签样式
                     if ($currentLabelClose) {
                         $processedMessage .= $this->applyLabelStyle($currentLabel, substr($message, $start, $pos - $start));
                         $lastLabel = false;
@@ -151,8 +196,11 @@ abstract class FormatterStyle
             }
         }
         $processedMessage .= substr($message, $start, strlen($message) - $start);
-        echo $processedMessage;exit;
         return $processedMessage;
     }
+    /**
+     * 配置标签样式
+     * 
+     */
     abstract function configureLabelStyle();
 }

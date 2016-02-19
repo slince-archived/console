@@ -1,4 +1,8 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
 namespace Slince\Console;
 
 use Slince\Console\Helper\HelperInterface;
@@ -11,16 +15,34 @@ use Slince\Console\Context\Option;
 class HelpCommand extends Command
 {
     
+    /**
+     * help command name
+     * 
+     * @var string
+     */
     const COMMAND_NAME = 'help';
 
+    /**
+     * help command name
+     *
+     * @var string
+     */
     protected $name = self::COMMAND_NAME;
 
+    /**
+     * (non-PHPdoc)
+     * @see \Slince\Console\Command::configure()
+     */
     function configure()
     {
         $this->name = 'help';
         $this->addArgument('command_name', Option::VALUE_REQUIRED, 'The command name');
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \Slince\Console\Command::execute()
+     */
     function execute(Io $io, Argv $argv)
     {
         $commandName = $argv->getArgument('command_name');
@@ -28,6 +50,12 @@ class HelpCommand extends Command
         $io->write($this->getCommandHelp($command));
     }
 
+    /**
+     * 获取command的Help对象
+     * 
+     * @param CommandInterface $command
+     * @return \Slince\Console\Help
+     */
     function getCommandHelp(CommandInterface $command)
     {
         $help = $this->createHelp();
@@ -46,6 +74,12 @@ class HelpCommand extends Command
         return $help;
     }
 
+    /**
+     * 获取command的usage信息
+     * 
+     * @param CommandInterface $command
+     * @return string
+     */
     protected function getCommandUsage(CommandInterface $command)
     {
         $argumentsUsages = [];
@@ -70,6 +104,11 @@ class HelpCommand extends Command
         return implode(' ', $usages);;
     }
     
+    /**
+     * 创建一个help对象
+     * 
+     * @return \Slince\Console\Help
+     */
     protected function createHelp()
     {
         return new Help();

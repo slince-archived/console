@@ -1,4 +1,8 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
 namespace Slince\Console\Context;
 
 use Slince\Console\Exception\RuntimeException;
@@ -7,12 +11,32 @@ use Slince\Console\Exception\InvalidArgumentException;
 class Argv
 {
 
+    /**
+     * token
+     * 
+     * @var array
+     */
     protected $tokens = [];
 
+    /**
+     * 解析结果，arguments
+     * 
+     * @var array
+     */
     protected $arguments = [];
 
+    /**
+     * 解析结果，options
+     * 
+     * @var array
+     */
     protected $options = [];
 
+    /**
+     * 脚本名称
+     * 
+     * @var string
+     */
     protected $scriptName;
 
     /**
@@ -32,22 +56,40 @@ class Argv
         }
     }
 
+    /**
+     * 添加tokens
+     * 
+     * @param array $tokens
+     */
     function addTokens($tokens)
     {
         $this->tokens += $tokens;
     }
 
+    /**
+     * 获取脚本名称
+     * 
+     * @return string
+     */
     function getScriptName()
     {
         return $this->scriptName;
     }
 
+    /**
+     * 绑定definition
+     * 
+     * @param Definition $definition
+     */
     function bind(Definition $definition)
     {
         $this->definition = $definition;
         $this->parse();
     }
 
+    /**
+     * 开始解析token
+     */
     protected function parse()
     {
         while (($token = array_shift($this->tokens)) != null) {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
 namespace Slince\Console;
 
 use Slince\Console\Commend\CommendInterface;
@@ -13,6 +17,11 @@ use Slince\Console\Exception\CommandNotFoundException;
 class Console
 {
 
+    /**
+     * 注册的command实例
+     * 
+     * @var array
+     */
     protected $commands = [];
 
     /**
@@ -48,17 +57,32 @@ class Console
         $this->io = $io;
     }
 
+    /**
+     * 获取helper注册器
+     * 
+     * @return \Slince\Console\HelperRegistery
+     */
     function getHelperRegistry()
     {
         return $this->helperRegistry;
     }
     
+    /**
+     * 添加一个command
+     * 
+     * @param CommandInterface $command
+     */
     function addCommand(CommandInterface $command)
     {
         $command->setConsole($this);
         $this->commands[$command->getName()] = $command;
     }
     
+    /**
+     * 添加一组command
+     * 
+     * @param array $commands
+     */
     function addCommands(array $commands)
     {
         foreach ($commands as $command) {
@@ -66,6 +90,11 @@ class Console
         }
     }
 
+    /**
+     * 运行控制台应用
+     * 
+     * @param Argv $argv
+     */
     function run(Argv $argv = null)
     {
         if (is_null($argv)) {
@@ -75,7 +104,7 @@ class Console
         try {
             $this->addCommands($this->getDefaultCommands());
             $commandName = $this->getCommandName();
-            if ($this->argv->hasOptionParameter(['-h', '--help'])) {
+            if (empty($commandName) || $this->argv->hasOptionParameter(['-h', '--help'])) {
                 if (is_null($commandName)) {
                     $commandName = HelpCommand::COMMAND_NAME;
                 }
@@ -95,17 +124,32 @@ class Console
         exit($exitCode);
     }
 
+    /**
+     * 执行command
+     * @param CommandInterface $command
+     */
     function runCommand(CommandInterface $command)
     {
         $this->argv->bind($command->getDefinition()->merge($this->getDefaultDefinition()));
         return $command->execute($this->io, $this->argv);
     }
     
+    /**
+     * 获取要执行的command名称
+     * @return string
+     */
     function getCommandName()
     {
         return $this->argv->getFirstArgument();
     }
     
+    /**
+     * 寻找command实例对象
+     * 
+     * @param string $commandName
+     * @throws CommandNotFoundException
+     * @return multitype:
+     */
     function find($commandName)
     {
         if (isset($this->commands[$commandName])) {
@@ -133,6 +177,12 @@ class Console
         throw new CommandNotFoundException($message);
     }
     
+    /**
+     * 如果command不存在，则寻找近似command
+     * @param string $commandName
+     * @param array $commandNames
+     * @return array
+     */
     function getAlternatives($commandName, $commandNames)
     {
         $alternatives = array_filter($commandNames, function($name) use ($commandName) {
@@ -144,6 +194,11 @@ class Console
         return $alternatives;
     }
     
+    /**
+     * 获取默认definition
+     * 
+     * @return \Slince\Console\Context\Definition
+     */
     protected function getDefaultDefinition()
     {
         return new Definition([
@@ -152,6 +207,11 @@ class Console
         ]);
     }
     
+    /**
+     * 获取默认命令对象实例
+     * 
+     * @return multitype:\Slince\Console\HelpCommand
+     */
     protected function getDefaultCommands()
     {
         return [
@@ -159,27 +219,37 @@ class Console
         ];
     }
     
+    /**
+     * 渲染异常
+     * 
+     * @param \Exception $e
+     */
     protected function renderException(\Exception $e)
     {
         $messages = [
             get_class($e),
-            $e->getMessage()
+            '<error>' . $e->getMessage() . '</error>'
         ];
         $this->io->writeln(PHP_EOL . implode(PHP_EOL, $messages));
     }
     
+    /**
+     * 获取输入输出流对象
+     * 
+     * @return \Slince\Console\Context\Io
+     */
     function getIo()
     {
         return $this->io;
     }
     
+    /**
+     * 是否是windows平台
+     * 
+     * @return number
+     */
     function isWin()
     {
-        return preg_match('/win/i', PHP_OS);
-    }
-    
-    function clear()
-    {
-        $this->isWin() ? shell_exec('cls') : shell_exec('clear');
+        return (boolean)preg_match('/win/i', PHP_OS);
     }
 }

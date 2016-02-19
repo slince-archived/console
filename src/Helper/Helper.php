@@ -1,4 +1,9 @@
 <?php
+/**
+ * slince console component
+ * @author Tao <taosikai@yeah.net>
+ */
+
 namespace Slince\Console\Helper;
 
 use Slince\Console\Context\Io;
