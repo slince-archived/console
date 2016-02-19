@@ -200,7 +200,6 @@ abstract class FormatterStyle
     }
     /**
      * 配置标签样式
-     * 
      */
     abstract function configureLabelStyle();
 }
