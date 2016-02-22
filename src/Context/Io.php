@@ -61,7 +61,7 @@ class Io
      * 
      * @param string $message
      */
-    function writeln($message)
+    function writeln($message = '')
     {
         $this->out->write($message, true);
     }

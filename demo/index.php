@@ -24,31 +24,14 @@ class SayHalloCommand extends Command
     function execute(Io $io, Argv $argv)
     {
         
-        $answer = $this->getHelper('Question')
-            ->ask(new Question('asda<success>Whats hello<error>your<success> name:</success>adada</error>sasadsa</success>ha'));
-        $io->write("Your name is {$answer}");
-        return 0;
-        /*
-        if($this->getHelper('Question')->ask(new ConfirmQuestion('Are you a boy?', true))){
-            $io->out("Your choose true");
-        } else {
-            $io->out("Your choose false");
-        }
-        */
-        $question = new ChoiceQuestion('Whats your favorite sports', ['sddddd' => 'baskerball', 'foot ball', 'ping pang'], 'sddddd');
+        $question = new ChoiceQuestion('Whats your favorite sports', ['baskerball', 'foot ball', 'ping pang'], 0);
         $question->setMaxAttempts(3);
         $question->setMultiSelect(true);
         $answer = $this->getHelper('Question')->ask($question);
-        print_r($answer);exit;
-        $io->write("You like {$answer}");
+        $io->write(sprintf("You like %s", implode(', ', $answer)));
     }
 }
 
 $console = new Console();
 $console->addCommand(new SayHalloCommand());
 $console->run();
-
-// $options = 'ab';
-// var_dump(getopt($options));
-
-// var_dump($argv);

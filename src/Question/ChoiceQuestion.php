@@ -138,8 +138,12 @@ class ChoiceQuestion extends Question
                 }
             }
             if (! empty($errorChoices)) {
-                throw new InvalidArgumentException(sprintf('The provided answer "\s", is ambiguous. Value should be one of %s.', 
-                    implode($this->multiAnswerGlue, $errorChoices), implode(' or ', $this->choices)));
+                $allowedChoices = $this->choices;
+                array_walk($allowedChoices, function(&$choice, $index){
+                    $choice = "[{$index}] $choice";
+                });
+                throw new InvalidArgumentException(sprintf('The provided answer "%s", is ambiguous. Value should be one of %s.', 
+                    implode($this->multiAnswerGlue, $errorChoices), implode(' or ', $allowedChoices)));
             }
             return $resultChoices;
         } else {

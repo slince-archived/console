@@ -51,16 +51,17 @@ class QuestionHelper extends Helper
      */
     protected function validateAttempts(QuestionInterface $question)
     {
-        $e = null;
+        $exception = null;
         do {
             $answer = $this->processAsk($question);
             try {
                 return call_user_func($question->getValidator(), $answer);
-            } catch (\Exception $e) {
-                $this->io->writeln($e->getMessage());
+            } catch (\Exception $exception) {
+                $this->io->writeln($exception->getMessage());
+                $this->io->writeln();
             }
             $question->reduceMaxAttempts();
         } while ($question->getMaxAttempts() > 0);
-        return $e;
+        return $exception;
     }
 }

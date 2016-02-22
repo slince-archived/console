@@ -80,6 +80,7 @@ class Formatter
      */
     const RESET = 0;
 
+    protected static $isSupport;
     /**
      * 前景色码
      * 
@@ -150,6 +151,18 @@ class Formatter
      */
     protected $fontStyles = [];
 
+    /**
+     * 是否支持多彩色输出
+     * 
+     * @return boolean
+     */
+    static function isSupport()
+    {
+        if (is_null(self::$isSupport)) {
+            self::$isSupport = !(bool)preg_match('/win/i', PHP_OS);
+        }
+        return self::$isSupport;
+    }
     /**
      * 设置背景色
      * 
@@ -223,6 +236,9 @@ class Formatter
      */
     function apply($text)
     {
+        if (! self::isSupport()) {
+            return $text;
+        }
         $codes = [];
         if (! is_null($this->foregroundColor)) {
             $codes[] = $this->foregroundColor;
