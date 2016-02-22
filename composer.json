@@ -1,9 +1,16 @@
 {
+    "name": "slince/console",
+    "description": "slince console component",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "tao",
+            "email": "taosikai@yeah.net"
+        }
+    ],
     "require": {
-        "symfony/console": "*",
-        "aura/cli": "*",
-        "kevinlebrun/colors.php": "^0.4.1",
-        "randsonjs/cli-color": "^0.2.0"
+        "php": "~5.4"
     },
     "autoload": {
         "psr-4": {
