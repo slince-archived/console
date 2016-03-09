@@ -19,7 +19,7 @@ class QuestionHelper extends Helper
     function ask(QuestionInterface $question)
     {
         if ($question->getValidator() == null) {
-            $answer = $this->processAsk($question);
+            return $this->processAsk($question);
         }
         return $this->validateAttempts($question);
     }

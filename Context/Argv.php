@@ -192,7 +192,9 @@ class Argv
                 }
             } elseif ($option->isValueOptional()) {
                 $value = $option->getDefault();
-            }
+            } elseif($option->isValueNone()) {
+                $value = true;
+            } 
         } else {
             if ($option->isValueNone()) {
                 throw new RuntimeException(sprintf('The "%s" option does not accept a value.', $option->isShort() ? "-{$name}" : "--{$name}"));
