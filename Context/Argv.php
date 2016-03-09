@@ -252,36 +252,74 @@ class Argv
         return $this->arguments;
     }
 
+    /**
+     * 获取单个argument
+     * 
+     * @param string $name
+     * @return string|number
+     */
     function getArgument($name)
     {
         return isset($this->arguments[$name]) ? $this->arguments[$name] : null;
     }
 
+    /**
+     * 批量设置options
+     * 
+     * @param array $options
+     */
     function setOptions(array $options)
     {
         $this->options = $options;
     }
 
+    /**
+     * 批量添加options
+     * 
+     * @param array $options
+     */
     function addOptions(array $options)
     {
         $this->options = array_merge($this->options, $options);
     }
 
+    /**
+     * 添加单个option
+     * 
+     * @param string $name
+     * @param string|number $option
+     */
     function addOption($name, $option)
     {
         $this->options[$name] = $option;
     }
 
+    /**
+     * 获取所有的options
+     * 
+     * @return array
+     */
     function getOptions()
     {
         return $this->options;
     }
 
+    /**
+     * 获取单个option
+     * 
+     * @param string|number $name
+     */
     function getOption($name)
     {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
+    /**
+     * 参数是否存在
+     * 
+     * @param array|mixed $parameters
+     * @return boolean
+     */
     function hasOptionParameter($parameters)
     {
         $parameters = (array) $parameters;
@@ -289,6 +327,9 @@ class Argv
         return ! empty($results);
     }
 
+    /**
+     * 获取下一个token
+     */
     protected function getNextToken()
     {
         return reset($this->tokens);
