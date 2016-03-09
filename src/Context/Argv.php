@@ -92,6 +92,7 @@ class Argv
      */
     protected function parse()
     {
+        $this->shiftFirstArgument();
         while (($token = array_shift($this->tokens)) != null) {
             if (substr($token, 0, 2) == '--') {
                 $this->parseLongOption($token);
@@ -103,6 +104,11 @@ class Argv
         }
     }
 
+    /**
+     * 解析长option
+     * 
+     * @param string $token
+     */
     protected function parseLongOption($token)
     {
         $name = substr($token, 2);
@@ -113,6 +119,11 @@ class Argv
         $this->addNewOption($name, $value);
     }
 
+    /**
+     * 解析短option
+     * 
+     * @param string $token
+     */
     protected function parseShortOption($token)
     {
         $name = $token = substr($token, 1);
@@ -133,6 +144,11 @@ class Argv
         $this->addNewOption($name, $value);
     }
 
+    /**
+     * 解析argument
+     * 
+     * @param string $token
+     */
     protected function parseArgument($token)
     {
         $index = count($this->arguments);
@@ -141,7 +157,28 @@ class Argv
             $this->arguments[$argument->getName()] = $token;
         } catch (InvalidArgumentException $e) {}
     }
+    
+    /**
+     * 第一个argument作为命令名称，解析前需要先删除
+     * @return void
+     */
+    protected function shiftFirstArgument()
+    {
+        foreach ($this->tokens as $key => $token) {
+            if ($token && $token{0} != '-') {
+                unset($this->tokens[$key]);
+                break;
+            }
+        }
+    }
 
+    /**
+     * 添加一个option
+     * 
+     * @param string $name
+     * @param string $value
+     * @throws RuntimeException
+     */
     protected function addNewOption($name, $value)
     {
         $option = $this->definition->getOption($name);
@@ -164,6 +201,11 @@ class Argv
         $this->options[$name] = $value;
     }
 
+    /**
+     * 获取第一个argument
+     * 
+     * @return string
+     */
     function getFirstArgument()
     {
         foreach ($this->tokens as $token) {
@@ -173,21 +215,38 @@ class Argv
         }
     }
 
+    /**
+     * 批量设置arguments
+     * 
+     * @param array $arguments
+     */
     function setArguments(array $arguments)
     {
         $this->arguments = $arguments;
     }
 
+    /**
+     * 添加一个argument
+     * @param array $arguments
+     */
     function addArguments(array $arguments)
     {
         $this->arguments = array_merge($this->arguments, $arguments);
     }
 
+    /**
+     * 添加一个argument
+     * @param array $arguments
+     */
     function addArgument($name, $argument)
     {
         $this->arguments[$name] = $argument;
     }
 
+    /**
+     * 获取所有的arguments
+     * @return array
+     */
     function getArguments()
     {
         return $this->arguments;
